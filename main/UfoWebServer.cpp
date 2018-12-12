@@ -124,6 +124,11 @@ bool UfoWebServer::HandleRequest(HttpRequestParser& httpParser, HttpResponse& ht
 		if (!requestHandler.HandleMqttConfigRequest(httpParser.GetParams(), httpResponse))
 			return false;
 	} 
+	else if (httpParser.GetUrl().equals("/ufoconfig"))
+	{
+		if (!requestHandler.HandleUfoConfigRequest(httpParser.GetParams(), httpResponse))
+			return false;
+	}
 	else if (httpParser.GetUrl().equals("/srvconfig")){
 		if (!requestHandler.HandleSrvConfigRequest(httpParser.GetParams(), httpResponse))
 			return false;

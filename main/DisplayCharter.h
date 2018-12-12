@@ -3,8 +3,9 @@
 
 #include "DotstarStripe.h"
 #include "String.h"
+#include "nvs.h"
 
-#define RING_LEDCOUNT 15
+#define RING_LEDCOUNT 60
 
 class DisplayCharter
 {
@@ -23,11 +24,19 @@ class DisplayCharter
     void ParseMorphArg(String& argument);
     void Display(DotstarStripe &dotstar, bool send);
 
+    bool Read(bool topRing);
+    bool Write(bool topRing);    
+
+    __uint32_t mRingLedCount = RING_LEDCOUNT;
+
   private:
     //__uint32_t GetPixelColor(__uint8_t i);
     void GetPixelColor(__uint8_t i, __uint8_t& ruR, __uint8_t& ruG, __uint8_t& ruB);
     
   private:
+    bool ReadInt(nvs_handle h, const char* sKey, uint32_t& rbValue);
+    bool WriteInt(nvs_handle h, const char* sKey, uint32_t iValue);
+
     bool mLedSet[RING_LEDCOUNT];
     __uint8_t mLedRed[RING_LEDCOUNT];
 	__uint8_t mLedGreen[RING_LEDCOUNT];
@@ -36,7 +45,7 @@ class DisplayCharter
 	__uint8_t mBackgroundRed;
 	__uint8_t mBackgroundGreen;
 	__uint8_t mBackgroundBlue;
-    //__uint32_t backgroundColor;
+    //__uint32_t backgroundColor;   
     __uint8_t whirlSpeed;
     bool whirlClockwise;
     __uint8_t offset;

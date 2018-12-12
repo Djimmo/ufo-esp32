@@ -174,6 +174,8 @@ bool DynamicRequestHandler::HandleInfoRequest(std::list<TParam>& params, HttpRes
 	cJSON_AddNumberToObject(json, "mqttqos", mpUfo->GetConfig().muMqttQos);
 	cJSON_AddNumberToObject(json, "mqttkeepalive", mpUfo->GetConfig().muMqttKeepalive);
 	cJSON_AddStringToObject(json, "mqtterrorstate", mpUfo->GetConfig().msMqttErrorState.c_str());
+	cJSON_AddNumberToObject(json, "topringledcount", mpUfo->DisplayCharterLevel1().mRingLedCount);
+	cJSON_AddNumberToObject(json, "bottomringledcount", mpUfo->DisplayCharterLevel2().mRingLedCount);
 	char* sBody = cJSON_Print(json);
 	cJSON_Delete(json);
 	rResponse.SetRetCode(sBody ? 200 : 500);
@@ -392,6 +394,35 @@ bool DynamicRequestHandler::HandleMqttConfigRequest(std::list<TParam>& params, H
 	rResponse.SetRetCode(200);
 	rResponse.AddHeader(HttpResponse::HeaderNoCache);
 	mpUfo->dt.leaveAction(dtHandleRequest);
+	return rResponse.Send(sBody.c_str(), sBody.length());
+}
+
+bool DynamicRequestHandler::HandleUfoConfigRequest(std::list<TParam>& params, HttpResponse& rResponse){
+	DynatraceAction* dtHandleRequest = mpUfo->dt.enterAction("Handle UFO Config Request");
+	DisplayCharter&	topRing = mpUfo->DisplayCharterLevel1();
+	DisplayCharter&	bottomRing = mpUfo->DisplayCharterLevel2();
+	String sBody;
+	sBody = "<html><head><title>SUCCESS - UFO Config update succeeded.</title>"
+			"<meta http-equiv=\"refresh\" content=\"3; url=/\"></head><body>";
+	for (auto &it : params) {
+		if (it.paramName == "topringledcount") {
+			topRing.mRingLedCount = it.paramValue.toInt();
+			sBody += " top: " + it.paramValue;
+		}
+		else if(it.paramName == "bottomringledcount") {
+			bottomRing.mRingLedCount = it.paramValue.toInt();
+			sBody += " bottom: " + it.paramValue;
+		}
+	}
+
+	bottomRing.Write(false);
+	topRing.Write(true);
+	
+	mbRestart = false;
+	sBody += "<h2>New settings stored, returning to main page shortly.</h2></body></html>";
+	rResponse.SetRetCode(200);
+	rResponse.AddHeader(HttpResponse::HeaderNoCache);
+	mpUfo->dt.leaveAction(dtHandleRequest);	
 	return rResponse.Send(sBody.c_str(), sBody.length());
 }
 

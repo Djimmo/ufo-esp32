@@ -106,6 +106,9 @@ void Ufo::Start(){
 		mAws.Init(this);
 	}
 	mMqtt.Init();
+
+	mDisplayCharterLevel1.Read(true);
+	mDisplayCharterLevel2.Read(false);
 	dt.leaveAction(dtStartup);
 
 }

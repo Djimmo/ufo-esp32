@@ -94,9 +94,10 @@
 				<li>
 					<a href="#!pageserversettings" class="padded-list">Web Server Settings</a>
 				</li>
+				<li>
+					<a href="#!pageufosettings" class="padded-list">UFO Settings</a>
+				</li>
 			</ul>
-
-
 		</div>
 
 	</home>
@@ -495,6 +496,31 @@ abc1234....
 		</div>
 	</pagedynatracemonitoringsettings>
 
+	<pageufosettings data-page="true">
+		<header class="header-bar">
+			<button class="btn icon icon-arrow-back pull-left" data-navigation="$previous-page"></button>
+			<div class="center">
+				<h1 class="title">UFO Settings</h1>
+			</div>
+		</header>
+		<div class="content">
+			<div class="input-wrapper list">
+				<form method='POST' action='/ufoconfig' id='configufoform'>
+					<div class="padded-full">
+						# of LEDS in Top Ring:<br>
+						<input type="text" name="topRingLedCount" id="topRingLedCount"/>
+					</div>
+					<div class="padded-full">
+						# of LEDS in Bottom Ring:<br>
+						<input type="text" name="bottomRingLedCount" id="bottomRingLedCount"/>
+					</div>
+					<div class="padded-full">
+						<button class="btn btn-submit fit-parent primary" type='submit' id='configureUfo'>Apply settings</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</pageufosettings>
 
 	<!-- scripts -->
 	<!--  <script src="phonon-core.min.js"></script> -->
@@ -908,6 +934,29 @@ abc1234....
 						document.getElementById('mqttclientkey').value = result.mqttclientkey || "";
 						document.getElementById('mqttclientcert').value = result.mqttclientcert || "";
 						document.getElementById('mqtterrorstate').value = result.mqtterrorstate || "";
+					},
+					error: function (res, flagError, xhr) {
+						console.error(flagError);
+						console.log(res);
+					}
+				});
+			}
+			if (evt.detail.page == "pageufosettings") {
+				var configureUfo = function(){
+					document.getElementById('configufoerror').innerText = "";
+					document.getElementById('configufoform').submit();
+				}
+				document.querySelector('#configureUfo').on('tap', configureUfo);
+				document.querySelector('#configureUfo').on('click', configureUfo);
+
+				var req = phonon.ajax({
+					method: 'GET',
+					url: 'info',
+					dataType: 'text/json',
+					success: function (res, xhr) {
+						var result = JSON.parse(xhr.response);
+						document.getElementById('topRingLedCount').value = result.topringledcount || "";
+						document.getElementById('bottomRingLedCount').value = result.bottomringledcount || "";
 					},
 					error: function (res, flagError, xhr) {
 						console.error(flagError);

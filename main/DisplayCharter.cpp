@@ -2,13 +2,15 @@
 #include "DisplayCharter.h"
 #include "String.h"
 #include <esp_log.h>
+#include "nvs_flash.h"
 
+static const char LOGTAG[] = "DisplayCharter";
 
 DisplayCharter::DisplayCharter(){
 	Init();
 }
 void DisplayCharter::Init(){
-	for (__uint8_t i=0 ; i<RING_LEDCOUNT ; i++)
+	for (__uint8_t i=0 ; i< mRingLedCount ; i++)
 		mLedSet[i] = false;
 	mBackgroundRed = 0;
 	mBackgroundGreen = 0;
@@ -25,7 +27,7 @@ void DisplayCharter::Init(){
 
 void DisplayCharter::SetLeds(__uint8_t pos, __uint8_t count, __uint8_t r, __uint8_t g, __uint8_t b){
 	for (__uint8_t i=0 ; i<count ; i++){
-		__uint8_t o = (pos + i) % RING_LEDCOUNT;
+		__uint8_t o = (pos + i) % mRingLedCount;
 		mLedSet[o] = true;
 		mLedRed[o] = r;
 		mLedGreen[o] = g;
@@ -184,7 +186,6 @@ void DisplayCharter::GetPixelColor(__uint8_t i, __uint8_t& ruR, __uint8_t& ruG, 
 	}
 }
 
-
 void DisplayCharter::Display(DotstarStripe &dotstar, bool send){
 
 	//taskENTER_CRITICAL(&mMutex);
@@ -193,7 +194,7 @@ void DisplayCharter::Display(DotstarStripe &dotstar, bool send){
 		__uint8_t r;
 		__uint8_t g;
 		__uint8_t b;
-		for (__uint8_t i=0 ; i<RING_LEDCOUNT ; i++){
+		for (__uint8_t i=0 ; i<mRingLedCount ; i++){
 			GetPixelColor(i, r, g, b);
 			dotstar.SetLeds(i, 1, r, g, b);
 		}
@@ -205,12 +206,12 @@ void DisplayCharter::Display(DotstarStripe &dotstar, bool send){
 	if (whirlSpeed){
 		if (!whirlTick--){
 			if (whirlClockwise){
-				if (++offset >= RING_LEDCOUNT)
+				if (++offset >= mRingLedCount)
 					offset = 0;
 			}
 			else{
 				if (!offset)
-					offset = RING_LEDCOUNT - 1;
+					offset = mRingLedCount - 1;
 				else
 					offset--;
 			}
@@ -251,7 +252,65 @@ void DisplayCharter::Display(DotstarStripe &dotstar, bool send){
 			}
 			break;
 	}
+	
 }
+
+bool DisplayCharter::Read(bool ring){
+	nvs_handle h;
+
+	if (nvs_flash_init() != ESP_OK)
+		return false;
+	if (nvs_open("LRConfig", NVS_READONLY, &h) != ESP_OK)
+		return false;
+
+	ReadInt(h, ring ? (const char*)"topRingLed" : (const char*)"bottomRingLed", mRingLedCount);
+
+	nvs_close(h);
+
+	return true;
+}
+
+bool DisplayCharter::ReadInt(nvs_handle h, const char* sKey, uint32_t& riValue){
+	esp_err_t rc = nvs_get_u32(h, sKey, &riValue);
+	
+	if (rc != ESP_OK) {
+		ESP_LOGW(LOGTAG, "nvs_get_u32(%s) failed: %s", sKey, esp_err_to_name(rc));
+		return false;
+	}
+	return true;
+}
+
+bool DisplayCharter::Write(bool ring)
+{
+	nvs_handle h;
+
+	if (nvs_flash_init() != ESP_OK)
+		return false;
+	if (nvs_open("LRConfig", NVS_READWRITE, &h) != ESP_OK)
+		return false;
+	//nvs_erase_all(h); //otherwise I need double the space
+
+	if (!WriteInt(h, ring ? (const char*)"topRingLed" : (const char*)"bottomRingLed", mRingLedCount))
+		return nvs_close(h), false;
+
+	ESP_LOGI(LOGTAG, "ring %s to %u LEDs success", ring ? "topRingLed" : "bottomRingLed", mRingLedCount);
+	nvs_commit(h);
+	nvs_close(h);
+	
+	return true;
+}
+
+
+bool DisplayCharter::WriteInt(nvs_handle h, const char* sKey, uint32_t iValue){
+	esp_err_t rc = nvs_set_u32(h, sKey, iValue);
+	if (rc != ESP_OK) {
+		ESP_LOGE(LOGTAG, "nvs_set_u32(%s) failed: %s", sKey, esp_err_to_name(rc));
+		return false;
+	}
+	return true;
+}
+
+
 
 
 
