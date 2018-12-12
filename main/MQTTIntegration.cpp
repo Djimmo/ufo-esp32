@@ -4,6 +4,7 @@
 #include <esp_log.h>
 #include <time.h>
 #include <cJSON.h>
+#include "temperature.h"
 
 static const char* LOGTAG = "MQTT";
 
@@ -96,7 +97,13 @@ void MQTTIntegration::SendStatus() {
     }
     sPayload.printf("\"device\":{\"id\":\"%s\",", mUfo.GetId().c_str());
     sPayload.printf("\"clientIP\":\"%s\",", mUfo.GetWifi().GetLocalAddress().c_str());
-    sPayload.printf("\"freemem\":\"%u\"}}", esp_get_free_heap_size());
+    sPayload.printf("\"ssid\":\"%s\",", mUfo.GetConfig().msSTASsid.c_str());
+    sPayload.printf("\"version\":\"%s\",", mUfo.dt.mDevice.appVersion.c_str());
+    sPayload.printf("\"build\":\"%s\",", mUfo.dt.mDevice.appBuild.c_str());
+    sPayload.printf("\"cpu\":\"%s\",", mUfo.dt.mDevice.cpu.c_str());
+    sPayload.printf("\"battery\":\"%u\",", mUfo.dt.mBatterylevel);
+    sPayload.printf("\"temperature\":\"%.2f\",", esp32_temperature());
+    sPayload.printf("\"freemem\":\"%u\"}}", esp_get_free_heap_size());    
     int msg_id = esp_mqtt_client_publish(mClient, mUfo.GetConfig().msMqttStatusTopic.c_str(), sPayload.c_str(), sPayload.length(),
         mUfo.GetConfig().muMqttStatusQos, 0);
     ESP_LOGI(LOGTAG, "status publish successful, msg_id=%d", msg_id);

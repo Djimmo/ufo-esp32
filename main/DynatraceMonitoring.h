@@ -84,6 +84,9 @@ public:
     bool mActive = false;
     __uint32_t mStartTimestamp;
 
+    tdDevice mDevice;
+    ushort mBatterylevel;
+
 private:
 
     DynatraceAction* mAction[100];
@@ -100,8 +103,6 @@ private:
     Url mUrl;
     WebClient  mClient;
 
-    tdDevice mDevice;
-    ushort mBatterylevel;
     portMUX_TYPE myMutex;
 
 };
