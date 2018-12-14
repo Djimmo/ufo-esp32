@@ -122,7 +122,7 @@ esp_err_t MQTTIntegration::HandleEvent(esp_mqtt_event_handle_t event) {
         case MQTT_EVENT_DISCONNECTED:        
             mbConnectionRetries++;
             ESP_LOGI(LOGTAG, "Disconnected, retry attempt %i in 10s", mbConnectionRetries);
-            if (mbConnectionRetries == 3) {
+            if (mbConnectionRetries > 3) {
                 mbConnected = false;                
                 ESP_LOGI(LOGTAG, "Setting state as disconnected");
             }            
