@@ -1,6 +1,7 @@
 #pragma once
 #include "DynamicRequestHandler.h"
 #include <mqtt_client.h>
+#include "Ota.h"
 
 class MQTTIntegration {
 public:
@@ -15,11 +16,14 @@ private:
     static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event);
     esp_err_t HandleEvent(esp_mqtt_event_handle_t event);
     void SendStatus();
-
+    void HandleOTA(const char * firmwareURL);
     Ufo& mUfo;
+    Ota* mOta;
+
 	esp_mqtt_client_config_t mClientConfig;
     esp_mqtt_client_handle_t mClient;
     bool mActive;
     bool mbConnected = false;
+    int mbConnectionRetries = 0;
     bool mInitNeeded = true;
 };

@@ -115,12 +115,17 @@ esp_err_t MQTTIntegration::HandleEvent(esp_mqtt_event_handle_t event) {
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
             mbConnected = true;
+            mbConnectionRetries = 0;
             msg_id = esp_mqtt_client_subscribe(mClient, mUfo.GetConfig().msMqttTopic.c_str(), mUfo.GetConfig().muMqttQos);
             ESP_LOGI(LOGTAG, "Connected, subscribing to %s, msg_id=%d", mUfo.GetConfig().msMqttTopic.c_str(), msg_id);
             break;
-        case MQTT_EVENT_DISCONNECTED:
-            mbConnected = false;
-            ESP_LOGI(LOGTAG, "Disconnected");
+        case MQTT_EVENT_DISCONNECTED:        
+            mbConnectionRetries++;
+            ESP_LOGI(LOGTAG, "Disconnected, retry attempt %i in 10s", mbConnectionRetries);
+            if (mbConnectionRetries == 3) {
+                mbConnected = false;                
+                ESP_LOGI(LOGTAG, "Setting state as disconnected");
+            }            
             break;
         case MQTT_EVENT_SUBSCRIBED:
             ESP_LOGI(LOGTAG, "Subscribed, msg_id=%d", event->msg_id);
@@ -199,6 +204,11 @@ void MQTTIntegration::HandleMessage(String data) {
     if (cJSON_IsString(command) && command->valuestring) {
         HandleCommand(command->valuestring);
     }
+    cJSON *otafw = cJSON_GetObjectItemCaseSensitive(json, "otafw");
+    if (cJSON_IsString(otafw) && otafw->valuestring) {
+        HandleOTA(otafw->valuestring);
+    }
+    
     cJSON_Delete(json);
 }
 
@@ -218,4 +228,10 @@ void MQTTIntegration::HandleCommand(const char * command) {
     ESP_LOGI(LOGTAG, "Handling api request: %s", temp.c_str());
     //*/
     handler.HandleApiRequest(params);
+}
+
+void MQTTIntegration::HandleOTA(const char * firmwareURL) {
+    ESP_LOGI(LOGTAG, "Starting OTA FW update from URL: %s", firmwareURL);
+    Ota mOta;
+    mOta.StartUpdateFirmwareTask(firmwareURL);
 }

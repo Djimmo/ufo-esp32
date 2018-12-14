@@ -18,6 +18,8 @@ static char tag[] = "DynamicRequestHandler";
 //#define OTA_LATEST_FIRMWARE_URL "https://github.com/Dynatrace/ufo-esp32/raw/master/firmware/ufo-esp32.bin"
 //#define OTA_LATEST_FIRMWARE_JSON_URL "https://raw.githubusercontent.com/Dynatrace/ufo-esp32/master/firmware/version.json"
 //#define OTA_LATEST_FIRMWARE_URL "https://raw.githubusercontent.com/Dynatrace/ufo-esp32/master/firmware/ufo-esp32.bin"
+#define OTA_LATEST_FIRMWARE_URL "https://github.com/Djimmo/ufo-esp32/raw/mqtt_dev/firmware/ufo-esp32.bin"
+#define OTA_LATEST_FIRMWARE_JSON_URL "https://github.com/Djimmo/ufo-esp32/raw/mqtt_dev/firmware/version.json"
 
 String DynamicRequestHandler::HandleApiRequest(std::list<TParam>& params) {
 	String sBody;
@@ -479,7 +481,7 @@ bool DynamicRequestHandler::HandleSrvConfigRequest(std::list<TParam>& params, Ht
 		}
 	}
 
-	sBody = "<html><head><title>SUCCESS - firmware update succeded, rebooting shortly.</title>"
+	sBody = "<html><head><title>SUCCESS - firmware update succeeded, rebooting shortly.</title>"
 			"<meta http-equiv=\"refresh\" content=\"10; url=";
 	sBody += newUrl;
 	sBody += "\"></head><body><h2>New settings stored, rebooting shortly.</h2></body></html>";
