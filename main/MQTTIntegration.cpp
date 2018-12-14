@@ -233,5 +233,8 @@ void MQTTIntegration::HandleCommand(const char * command) {
 void MQTTIntegration::HandleOTA(const char * firmwareURL) {
     ESP_LOGI(LOGTAG, "Starting OTA FW update from URL: %s", firmwareURL);
     Ota mOta;
-    mOta.StartUpdateFirmwareTask(firmwareURL);
+    // Copy to new charArray, otherwise it does not work...
+    char * fwURL = new char[100];
+    memcpy(fwURL, firmwareURL, 100* sizeof(char));
+    mOta.StartUpdateFirmwareTask(fwURL);
 }

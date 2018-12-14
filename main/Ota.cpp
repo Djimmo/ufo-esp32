@@ -210,8 +210,9 @@ bool Ota::SwitchBootPartition() {
 
 void task_function_firmwareupdate(void* user_data) {
 	ESP_LOGW(LOGTAG, "Starting Firmware Update Task ....");
-    ESP_LOGI(LOGTAG, "task_function_firmwareupdate with URL: %s", (const char*)user_data);  
+    
     Ota ota;
+
     if(ota.UpdateFirmware((const char*)user_data)) { //url
       	ESP_LOGI(LOGTAG, "Firmware updated. Rebooting now......");
     } else {
