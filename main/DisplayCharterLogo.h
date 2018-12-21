@@ -4,20 +4,25 @@
 #include "DotstarStripe.h"
 #include "String.h"
 
-class DisplayCharterLogo {
-public:
+class DisplayCharterLogo
+{
+  public:
 	DisplayCharterLogo();
 	virtual ~DisplayCharterLogo();
 
 	void Init();
 
 	void SetLed(__uint8_t uLed, __uint8_t r, __uint8_t g, __uint8_t b);
-	void ParseLogoLedArg(String& argument);
-
+	void ParseLogoLedArg(String &argument);
 
 	void Display(DotstarStripe &dotstar);
 
-private:
+	// Expose Led Colors
+	__uint8_t GetLedRed(__uint8_t ledNo) { return mLedRed[ledNo]; };
+	__uint8_t GetLedGreen(__uint8_t ledNo) { return mLedGreen[ledNo]; };
+	__uint8_t GetLedBlue(__uint8_t ledNo) { return mLedBlue[ledNo]; };
+
+  private:
 	__uint8_t mLedRed[4];
 	__uint8_t mLedGreen[4];
 	__uint8_t mLedBlue[4];

@@ -25,7 +25,30 @@ class DisplayCharter
     void Display(DotstarStripe &dotstar, bool send);
 
     bool Read(bool topRing);
-    bool Write(bool topRing);    
+    bool Write(bool topRing);   
+
+    // Expose Led Colors
+    __uint8_t GetLedRed(__uint8_t ledNo) {return mLedRed[ledNo];};
+    __uint8_t GetLedGreen(__uint8_t ledNo) {return mLedGreen[ledNo];};
+    __uint8_t GetLedBlue(__uint8_t ledNo) {return mLedBlue[ledNo];};
+    
+    // Expose Background Color
+    __uint8_t GetBackgroundRed() {return mBackgroundRed;};
+    __uint8_t GetBackgroundGreen() {return mBackgroundGreen;};
+    __uint8_t GetBackgroundBlue() {return mBackgroundBlue;};
+    
+    // Expose Whirl Parameters
+    __uint8_t GetWhirlSpeed() {return whirlSpeed;};
+    bool GetWhirlClockwise() {return whirlClockwise;};
+    __uint8_t GetWhirlTick() {return whirlTick;};
+
+    // Expose Morph Parameters
+    __uint8_t GetMorphState() {return morphingState;};
+    __uint8_t GetMorphPeriod() {return morphPeriod;};
+    __uint8_t GetMorphPeriodTick() {return morphPeriodTick;};
+    __uint8_t GetMorphSpeed() {return morphSpeed;};
+    __uint8_t GetMorphSpeedTick() {return morphSpeedTick;};
+    __uint8_t GetMorphPercentage() {return morphingPercentage;};
 
     __uint32_t mRingLedCount = RING_LEDCOUNT;
 

@@ -103,7 +103,74 @@ void MQTTIntegration::SendStatus() {
     sPayload.printf("\"cpu\":\"%s\",", mUfo.dt.mDevice.cpu.c_str());
     sPayload.printf("\"battery\":\"%u\",", mUfo.dt.mBatterylevel);
     sPayload.printf("\"temperature\":\"%.2f\",", esp32_temperature());
-    sPayload.printf("\"freemem\":\"%u\"}}", esp_get_free_heap_size());    
+    
+    sPayload.printf("\"leds\": {");
+    sPayload.printf("\"top\": {");
+    sPayload.printf("\"color\": [");
+    for (int i = 0; i < 15; i++) {
+        sPayload.printf("\"%02x", mUfo.DisplayCharterLevel1().GetLedRed(i));
+        sPayload.printf("%02x", mUfo.DisplayCharterLevel1().GetLedGreen(i));
+        sPayload.printf("%02x\"", mUfo.DisplayCharterLevel1().GetLedBlue(i));
+        if (i < 14) {
+            sPayload.printf(",");
+        }
+    }
+    sPayload.printf("],\"background\": \"");
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel1().GetBackgroundRed());
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel1().GetBackgroundGreen());
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel1().GetBackgroundBlue());
+    sPayload.printf("\",");
+    sPayload.printf("\"whirl\": {");
+    sPayload.printf("\"speed\": %u,", mUfo.DisplayCharterLevel1().GetWhirlSpeed()); 
+    sPayload.printf("\"clockwise\": %u", mUfo.DisplayCharterLevel1().GetWhirlClockwise()); 
+    sPayload.printf("},");
+    sPayload.printf("\"morph\": {");
+    sPayload.printf(" \"state\": %u,", mUfo.DisplayCharterLevel1().GetMorphState());
+    sPayload.printf(" \"period\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriod());
+    sPayload.printf(" \"periodTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriodTick());
+    sPayload.printf(" \"speed\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeed());
+    sPayload.printf(" \"speedTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeedTick());
+    sPayload.printf(" \"percentage\": %u", mUfo.DisplayCharterLevel1().GetMorphPercentage());
+    sPayload.printf("}},");
+    sPayload.printf("\"bottom\": {");
+    sPayload.printf("\"color\": [");
+    for (int i = 0; i < 15; i++) {
+        sPayload.printf("\"%02x", mUfo.DisplayCharterLevel2().GetLedRed(i));
+        sPayload.printf("%02x", mUfo.DisplayCharterLevel2().GetLedGreen(i));
+        sPayload.printf("%02x\"", mUfo.DisplayCharterLevel2().GetLedBlue(i));
+        if (i < 14) {
+            sPayload.printf(",");
+        }
+    }
+    sPayload.printf("],\"background\": \"");
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel2().GetBackgroundRed());
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel2().GetBackgroundGreen());
+    sPayload.printf("%02x", mUfo.DisplayCharterLevel2().GetBackgroundBlue());
+    sPayload.printf("\",");    
+    sPayload.printf("\"whirl\": {");
+    sPayload.printf("\"speed\": %u,", mUfo.DisplayCharterLevel2().GetWhirlSpeed()); 
+    sPayload.printf("\"clockwise\": %u", mUfo.DisplayCharterLevel2().GetWhirlClockwise()); 
+    sPayload.printf("},");
+    sPayload.printf("\"morph\": {");
+    sPayload.printf(" \"state\": %u,", mUfo.DisplayCharterLevel1().GetMorphState());
+    sPayload.printf(" \"period\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriod());
+    sPayload.printf(" \"periodTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriodTick());
+    sPayload.printf(" \"speed\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeed());
+    sPayload.printf(" \"speedTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeedTick());
+    sPayload.printf(" \"percentage\": %u", mUfo.DisplayCharterLevel1().GetMorphPercentage());
+    sPayload.printf("}},");
+    sPayload.printf("\"logo\": [");
+    for (int i = 0; i < 4; i++) {
+        sPayload.printf("\"%02x", mUfo.GetLogoDisplay().GetLedRed(i));
+        sPayload.printf("%02x", mUfo.GetLogoDisplay().GetLedGreen(i));
+        sPayload.printf("%02x\"", mUfo.GetLogoDisplay().GetLedBlue(i));
+        if (i < 3) {
+            sPayload.printf(",");
+        }
+    }
+    sPayload.printf("]");
+    sPayload.printf("},");    
+    sPayload.printf("\"freemem\":\"%u\"}}", esp_get_free_heap_size());  
     int msg_id = esp_mqtt_client_publish(mClient, mUfo.GetConfig().msMqttStatusTopic.c_str(), sPayload.c_str(), sPayload.length(),
         mUfo.GetConfig().muMqttStatusQos, 0);
     ESP_LOGI(LOGTAG, "status publish successful, msg_id=%d", msg_id);
