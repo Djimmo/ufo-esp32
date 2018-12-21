@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>UFO State</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto;
+            /* background-color: #2196F3; */
+            /* padding: 10px; */
+        }
+
+        .grid-item {
+            border: 1px solid rgb(255, 255, 255);
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin-bottom:50px; display: flex">
+        <div id="canvas-holder" style="float: left; width:50%">
+            <canvas id="chart-area"></canvas>
+        </div>
+        <div class="grid-container" style="float: left; margin-top: 96px; width:64px; height: 64px;">
+            <div id="logo1" class="grid-item"></div>
+            <div id="logo2" class="grid-item"></div>
+            <div id="logo3" class="grid-item"></div>
+            <div id="logo4" class="grid-item"></div>
+        </div>
+    </div>
+    <br>
+    <div>
+        <button id="updateStatus">Update Status</button>
+        <button id="whirlcw">Whirl cw</button>
+        <button id="whirlccw">Whirl ccw</button>
+        <button id="startwhirl">Start whirling</button>
+    </div>
+    <script src="ufoController.js"></script>
+</body>
+
+</html>
