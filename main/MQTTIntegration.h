@@ -24,6 +24,7 @@ private:
     esp_mqtt_client_handle_t mClient;
     bool mActive;
     bool mbConnected = false;
+    int mbLostConnection = 0;
     int mbConnectionRetries = 0;
     bool mInitNeeded = true;
 };

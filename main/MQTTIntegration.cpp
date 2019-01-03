@@ -104,6 +104,11 @@ void MQTTIntegration::SendStatus() {
     sPayload.printf("\"battery\":\"%u\",", mUfo.dt.mBatterylevel);
     sPayload.printf("\"temperature\":\"%.2f\",", esp32_temperature());
     
+    if (mbLostConnection > 0) {
+        sPayload.printf("\"lostConnection\": %u,", mbLostConnection);
+        mbLostConnection = 0;
+    }
+
     sPayload.printf("\"leds\": {");
     sPayload.printf("\"top\": {");
     sPayload.printf("\"color\": [");
@@ -188,6 +193,7 @@ esp_err_t MQTTIntegration::HandleEvent(esp_mqtt_event_handle_t event) {
             break;
         case MQTT_EVENT_DISCONNECTED:        
             mbConnectionRetries++;
+            mbLostConnection++;
             ESP_LOGI(LOGTAG, "Disconnected, retry attempt %i in 10s", mbConnectionRetries);
             if (mbConnectionRetries > 3) {
                 mbConnected = false;                
