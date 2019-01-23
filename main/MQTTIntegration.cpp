@@ -157,12 +157,12 @@ void MQTTIntegration::SendStatus() {
     sPayload.printf("\"clockwise\": %u", mUfo.DisplayCharterLevel2().GetWhirlClockwise()); 
     sPayload.printf("},");
     sPayload.printf("\"morph\": {");
-    sPayload.printf(" \"state\": %u,", mUfo.DisplayCharterLevel1().GetMorphState());
-    sPayload.printf(" \"period\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriod());
-    sPayload.printf(" \"periodTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphPeriodTick());
-    sPayload.printf(" \"speed\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeed());
-    sPayload.printf(" \"speedTick\": %u,", mUfo.DisplayCharterLevel1().GetMorphSpeedTick());
-    sPayload.printf(" \"percentage\": %u", mUfo.DisplayCharterLevel1().GetMorphPercentage());
+    sPayload.printf(" \"state\": %u,", mUfo.DisplayCharterLevel2().GetMorphState());
+    sPayload.printf(" \"period\": %u,", mUfo.DisplayCharterLevel2().GetMorphPeriod());
+    sPayload.printf(" \"periodTick\": %u,", mUfo.DisplayCharterLevel2().GetMorphPeriodTick());
+    sPayload.printf(" \"speed\": %u,", mUfo.DisplayCharterLevel2().GetMorphSpeed());
+    sPayload.printf(" \"speedTick\": %u,", mUfo.DisplayCharterLevel2().GetMorphSpeedTick());
+    sPayload.printf(" \"percentage\": %u", mUfo.DisplayCharterLevel2().GetMorphPercentage());
     sPayload.printf("}},");
     sPayload.printf("\"logo\": [");
     for (int i = 0; i < 4; i++) {
