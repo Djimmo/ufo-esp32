@@ -112,11 +112,11 @@ void MQTTIntegration::SendStatus() {
     sPayload.printf("\"leds\": {");
     sPayload.printf("\"top\": {");
     sPayload.printf("\"color\": [");
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < mUfo.DisplayCharterLevel1().mRingLedCount; i++) {
         sPayload.printf("\"%02x", mUfo.DisplayCharterLevel1().GetLedRed(i));
         sPayload.printf("%02x", mUfo.DisplayCharterLevel1().GetLedGreen(i));
         sPayload.printf("%02x\"", mUfo.DisplayCharterLevel1().GetLedBlue(i));
-        if (i < 14) {
+        if (i < mUfo.DisplayCharterLevel1().mRingLedCount-1) {
             sPayload.printf(",");
         }
     }
@@ -139,11 +139,11 @@ void MQTTIntegration::SendStatus() {
     sPayload.printf("}},");
     sPayload.printf("\"bottom\": {");
     sPayload.printf("\"color\": [");
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < mUfo.DisplayCharterLevel2().mRingLedCount; i++) {
         sPayload.printf("\"%02x", mUfo.DisplayCharterLevel2().GetLedRed(i));
         sPayload.printf("%02x", mUfo.DisplayCharterLevel2().GetLedGreen(i));
         sPayload.printf("%02x\"", mUfo.DisplayCharterLevel2().GetLedBlue(i));
-        if (i < 14) {
+        if (i < mUfo.DisplayCharterLevel2().mRingLedCount-1) {
             sPayload.printf(",");
         }
     }
@@ -306,8 +306,14 @@ void MQTTIntegration::HandleCommand(const char * command) {
 void MQTTIntegration::HandleOTA(const char * firmwareURL) {
     ESP_LOGI(LOGTAG, "Starting OTA FW update from URL: %s", firmwareURL);
     Ota mOta;
+
+    if (strlen(firmwareURL) > 256) {
+        ESP_LOGE(LOGTAG, "Firmware URL is longer than 128 characters, terminating update.");
+        return;
+    }
+
     // Copy to new charArray, otherwise it does not work...
-    char * fwURL = new char[100];
-    memcpy(fwURL, firmwareURL, 100* sizeof(char));
+    char * fwURL = new char[256];
+    memcpy(fwURL, firmwareURL, 256* sizeof(char));
     mOta.StartUpdateFirmwareTask(fwURL);
 }

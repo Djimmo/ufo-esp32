@@ -10,8 +10,12 @@ DisplayCharter::DisplayCharter(){
 	Init();
 }
 void DisplayCharter::Init(){
-	for (__uint8_t i=0 ; i< mRingLedCount ; i++)
+	for (__uint8_t i=0 ; i< mRingLedCount ; i++){
 		mLedSet[i] = false;
+		mLedRed[i] = 00;
+		mLedGreen[i] = 00;
+		mLedBlue[i] = 00;
+	}
 	mBackgroundRed = 0;
 	mBackgroundGreen = 0;
 	mBackgroundBlue = 0;
