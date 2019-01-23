@@ -5,7 +5,7 @@
 #include "String.h"
 #include "nvs.h"
 
-#define RING_LEDCOUNT 60
+#define RING_LEDCOUNT 15 // Max 60
 
 class DisplayCharter
 {
