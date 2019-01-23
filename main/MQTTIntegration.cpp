@@ -308,7 +308,7 @@ void MQTTIntegration::HandleOTA(const char * firmwareURL) {
     Ota mOta;
 
     if (strlen(firmwareURL) > 256) {
-        ESP_LOGE(LOGTAG, "Firmware URL is longer than 128 characters, terminating update.");
+        ESP_LOGE(LOGTAG, "Firmware URL is longer than 256 characters, terminating update.");
         return;
     }
 
