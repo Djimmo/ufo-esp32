@@ -185,8 +185,6 @@ esp_err_t MQTTIntegration::HandleEvent(esp_mqtt_event_handle_t event) {
     //esp_mqtt_client_handle_t client = event->client;
     int msg_id;
     switch (event->event_id) {
-        case MQTT_EVENT_BEFORE_CONNECT:
-            break;
         case MQTT_EVENT_CONNECTED:
             mbConnected = true;
             mbConnectionRetries = 0;
